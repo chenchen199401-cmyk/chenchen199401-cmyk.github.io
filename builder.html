@@ -221,7 +221,8 @@
     </div>
   </footer>
 
-  <script src="js/data.js"></script>
+  <!-- 加版本号避免 GitHub Pages / 浏览器缓存旧逻辑 -->
+  <script src="js/data.js?v=20251231-4"></script>
   <script>
     // 移动端导航切换
     function toggleNav() {
@@ -319,23 +320,27 @@
       };
 
       // 关键约束：右侧总价必须与预算一致（通过回填“其他配件”差额）
-      config.other.price = calcRemainderOtherCost(budget, config);
+      reconcileConfigToBudget(budget, config);
       
       currentConfig = config;
       renderConfig(config, purpose);
     }
 
-    // 计算“其他配件”差额（保证总价=预算）
-    function calcRemainderOtherCost(budget, config) {
-      const partsTotal =
+    function sumCoreParts(config) {
+      return (
         (config.cpu?.price || 0) +
         (config.gpu?.price || 0) +
         (config.memory?.price || 0) +
-        (config.ssd?.price || 0);
+        (config.ssd?.price || 0)
+      );
+    }
 
-      // 若核心配件已超预算，先不让 other 变负数（总价仍会超）
-      // 这种情况在我们当前规则下极少发生；后续需要再做“降档”可继续优化
-      return Math.max(0, budget - partsTotal);
+    // 强约束：保证列表价格之和 = 预算（通过 other 回填）
+    function reconcileConfigToBudget(budget, config) {
+      const partsTotal = sumCoreParts(config);
+      config.other.price = Math.max(0, budget - partsTotal);
+      // 兜底：给渲染层一个可读字段
+      config._total = partsTotal + (config.other?.price || 0);
     }
 
     // 选择最佳CPU
@@ -529,14 +534,19 @@
         genome: '基因组组装'
       };
       
-      const total = (config.cpu?.price || 0) + 
-                    (config.gpu?.price || 0) + 
-                    (config.memory?.price || 0) + 
+      const budget = parseInt(document.getElementById('budget').value);
+      const total = (config._total ?? ((config.cpu?.price || 0) +
+                    (config.gpu?.price || 0) +
+                    (config.memory?.price || 0) +
                     (config.ssd?.price || 0) +
-                    (config.other?.price || 0);
+                    (config.other?.price || 0)));
+      const diff = budget - total;
       
       result.innerHTML = `
         <h3>🎯 ${purposeNames[purpose]} - 智能推荐</h3>
+        <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+          预算：¥${budget.toLocaleString()}${diff === 0 ? '（已对齐）' : `（差额：¥${diff.toLocaleString()}）`}
+        </p>
         
         <div class="config-item">
           <div class="label">
