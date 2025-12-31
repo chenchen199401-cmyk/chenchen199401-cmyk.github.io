@@ -7,6 +7,8 @@
 const cpuData = [
   // 工作站/HEDT 级别
   { brand: 'AMD', model: 'Threadripper 7995WX', tier: '工作站旗舰', cores: 96, threads: 192, score: 100000, price: 80000, note: '目前地表最强算力，价格极高' },
+  // 按用户需求补充：预算接近/超过 8w 时强制推荐（价格按需求固定）
+  { brand: 'AMD', model: 'Threadripper 9980X', tier: 'HEDT旗舰', cores: 64, threads: 128, score: 70000, price: 40000, note: '预算接近/超过8万时优先；R23 为估算值' },
   { brand: 'AMD', model: 'Threadripper 7980X', tier: 'HEDT旗舰', cores: 64, threads: 128, score: 67500, price: 35000, note: '顶级发烧友/渲染主力' },
   { brand: 'AMD', model: 'Threadripper 7970X', tier: 'HEDT高端', cores: 32, threads: 64, score: 46500, price: 18000, note: '32核高频，兼顾视窗操作' },
   { brand: 'AMD', model: 'Threadripper 7960X', tier: 'HEDT入门', cores: 24, threads: 48, score: 37000, price: 11000, note: 'TR系列入门款' },
@@ -105,6 +107,10 @@ const ssdData = [
   // 消费级旗舰
   { rank: 8, model: 'Solidigm P44 Pro', capacity: '2TB', read4k: 67.0, price: 1099, note: '消费级旗舰/原海力士/强烈推荐' },
   { rank: 9, model: '三星 990 Pro', capacity: '2TB', read4k: 62.5, price: 1199, note: '消费级旗舰/性能标杆' },
+  { rank: 9.1, model: '三星 990 Pro', capacity: '4TB', read4k: 62.5, price: 2299, note: '大容量版本（参考价）' },
+  // PCIe 5.0（按 2025-03-18 国内官方定价）
+  { rank: 8.5, model: '三星 9100 Pro', capacity: '2TB', read4k: 70.0, price: 1799, note: 'PCIe 5.0/官方定价' },
+  { rank: 8.6, model: '三星 9100 Pro', capacity: '4TB', read4k: 70.0, price: 3299, note: 'PCIe 5.0/官方定价' },
   { rank: 10, model: '西部数据 SN850X', capacity: '2TB', read4k: 59.1, price: 1099, note: '消费级旗舰/游戏性能强' },
   
   // 高性价比

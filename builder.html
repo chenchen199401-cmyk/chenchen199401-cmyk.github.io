@@ -259,7 +259,7 @@
       // SSD
       const ssdSelect = document.getElementById('manualSsd');
       ssdSelect.innerHTML = ssdData
-        .filter(s => s.price < 2000)
+        .filter(s => s.price < 6000)
         .sort((a, b) => a.price - b.price)
         .map(s => `<option value="${s.model}|${s.price}">${s.model} ${s.capacity} - ¥${s.price.toLocaleString()}</option>`)
         .join('');
@@ -315,15 +315,37 @@
         gpu: selectBestGPU(budget, purpose, priority, ratio, useUsed),
         memory: selectBestMemory(budget, purpose, priority, ratio),
         ssd: selectBestSSD(budget, purpose, ratio),
-        other: estimateOtherCost(budget, purpose)
+        other: { model: '主板+电源+散热+机箱', price: 0 }
       };
+
+      // 关键约束：右侧总价必须与预算一致（通过回填“其他配件”差额）
+      config.other.price = calcRemainderOtherCost(budget, config);
       
       currentConfig = config;
       renderConfig(config, purpose);
     }
 
+    // 计算“其他配件”差额（保证总价=预算）
+    function calcRemainderOtherCost(budget, config) {
+      const partsTotal =
+        (config.cpu?.price || 0) +
+        (config.gpu?.price || 0) +
+        (config.memory?.price || 0) +
+        (config.ssd?.price || 0);
+
+      // 若核心配件已超预算，先不让 other 变负数（总价仍会超）
+      // 这种情况在我们当前规则下极少发生；后续需要再做“降档”可继续优化
+      return Math.max(0, budget - partsTotal);
+    }
+
     // 选择最佳CPU
     function selectBestCPU(budget, purpose, priority, ratio) {
+      // 强制规则：预算接近/超过 8w（这里按 >= 75000 视为“接近”）时，CPU 必须为 TR 9980X（¥40000）
+      if (budget >= 75000) {
+        const tr9980x = cpuData.find(c => c.model === 'Threadripper 9980X');
+        if (tr9980x) return tr9980x;
+      }
+
       // 经验规则：CPU 在生信场景里非常关键（多线程任务多）
       // 旧逻辑 CPU 占比偏低，导致预算提高时 CPU 不“跨档升级”
       let cpuShare = 0.20;
@@ -459,26 +481,42 @@
 
     // 选择最佳SSD
     function selectBestSSD(budget, purpose, ratio) {
-      let ssdBudget = budget * 0.12;
-      
+      // 规则（你提出的硬约束）：
+      // - 任意场景：<=10000 用 TiPlus 7100 2TB；>10000 用 990 Pro 2TB；>=30000 用 9100 Pro 2TB
+      // - 转录组及单细胞以上：SSD 至少 4TB（并按同档位选择 4TB 型号）
+      const needAtLeast4TB = (purpose === 'transcriptome' || purpose === 'singlecell' || purpose === 'genome');
+
+      let targetModel = '致态 TiPlus 7100';
+      let targetCapacity = needAtLeast4TB ? '4TB' : '2TB';
+
+      if (budget > 10000) {
+        targetModel = '三星 990 Pro';
+        targetCapacity = needAtLeast4TB ? '4TB' : '2TB';
+      }
+      if (budget >= 30000) {
+        targetModel = '三星 9100 Pro';
+        targetCapacity = needAtLeast4TB ? '4TB' : '2TB';
+      }
+
+      // 在数据中找对应条目
+      const exact = ssdData.find(s => s.model === targetModel && s.capacity === targetCapacity);
+      if (exact) return exact;
+
+      // 若没有 4TB 对应型号，回退到“任意 4TB”里最接近的
+      if (needAtLeast4TB) {
+        const any4tb = ssdData.filter(s => s.capacity === '4TB').sort((a, b) => a.price - b.price);
+        if (any4tb[0]) return any4tb[0];
+      }
+
+      // 最终兜底：按预算从低到高选择
+      const ssdBudget = budget * 0.12;
       const candidates = ssdData
-        .filter(s => s.price <= ssdBudget * 1.3)
+        .filter(s => s.price <= ssdBudget * 1.5)
         .sort((a, b) => b.read4k - a.read4k);
-      
-      return candidates[0] || ssdData.find(s => s.price <= ssdBudget) || { model: '致态 TiPlus 7100 1TB', price: 499, capacity: '1TB' };
+      return candidates[0] || { model: '致态 TiPlus 7100', capacity: '1TB', price: 499, read4k: 32.5 };
     }
 
-    // 估算其他配件成本
-    function estimateOtherCost(budget, purpose) {
-      // 主板+电源+散热+机箱
-      let cost = 1500;
-      if (budget >= 8000) cost = 2000;
-      if (budget >= 15000) cost = 3000;
-      if (budget >= 30000) cost = 5000;
-      if (budget >= 50000) cost = 10000;
-      
-      return { model: '主板+电源+散热+机箱', price: cost };
-    }
+    // 注：旧版 estimateOtherCost 已弃用（改为自动回填差额，保证总价=预算）
 
     // 渲染配置
     function renderConfig(config, purpose) {
