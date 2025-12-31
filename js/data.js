@@ -20,12 +20,16 @@ const cpuData = [
   { brand: 'Intel', model: 'Core Ultra 5 245K', tier: '消费级中高', cores: 14, threads: 14, score: 24935, price: 1189, note: '主流选择' },
   { brand: 'Intel', model: 'i9-14900K', tier: '消费级旗舰', cores: 24, threads: 32, score: 38497, price: 2490, note: '上一代旗舰' },
   { brand: 'Intel', model: 'i7-14700K', tier: '消费级高端', cores: 20, threads: 28, score: 34805, price: 1904, note: '游戏生产力兼顾' },
+  // 同款无核显版本（便于按用户习惯搜索）
+  { brand: 'Intel', model: 'i7-14700KF', tier: '消费级高端', cores: 20, threads: 28, score: 34805, price: 1904, note: '同 i7-14700K（无核显），游戏生产力兼顾' },
   { brand: 'Intel', model: 'i5-14600K', tier: '消费级中高', cores: 14, threads: 20, score: 23983, price: 1320, note: '热门全能U' },
   { brand: 'Intel', model: 'i5-12600KF', tier: '消费级中端', cores: 10, threads: 16, score: 17500, price: 1099, note: '老款神U' },
   { brand: 'Intel', model: 'i5-12400F', tier: '消费级入门', cores: 6, threads: 12, score: 12000, price: 699, note: '千元内装机首选' },
   { brand: 'Intel', model: 'i3-12100F', tier: '消费级亮机', cores: 4, threads: 8, score: 8400, price: 469, note: '办公首选' },
   
   // 消费级 AMD
+  // 推荐方案常用（部分跑分为区间估算值，用于“跨档推荐”）
+  { brand: 'AMD', model: 'Ryzen 9 7900X', tier: '消费级高端', cores: 12, threads: 24, score: 28500, price: 2200, note: '转录组主流推荐；R23 为估算值' },
   { brand: 'AMD', model: 'Ryzen 9 9950X3D', tier: '消费级旗舰', cores: 16, threads: 32, score: 42377, price: 4350, note: '游戏+生产力双料王' },
   { brand: 'AMD', model: 'Ryzen 9 9950X', tier: '消费级旗舰', cores: 16, threads: 32, score: 42103, price: 3049, note: '多核性能强' },
   { brand: 'AMD', model: 'Ryzen 9 9900X', tier: '消费级高端', cores: 12, threads: 24, score: 32626, price: 2479, note: '12核高性能' },
