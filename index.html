@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>医学生电脑硬件配置推荐 - 生信科研专用</title>
+  <meta name="description" content="专为医学生和生信研究人员打造的电脑硬件配置推荐工具，一键生成最适合你的配置方案">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="index.html" class="nav-brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
+          生信配置助手
+        </a>
+        <button class="nav-toggle" onclick="toggleNav()">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" class="active">需求选择</a></li>
+          <li><a href="cpu.html">CPU评价</a></li>
+          <li><a href="gpu.html">GPU评价</a></li>
+          <li><a href="builder.html">预算配置</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>🧬 医学生电脑硬件配置推荐</h1>
+      <p>专为生信科研打造，从入门R语言到基因组组装，一键生成最适合你的配置方案</p>
+      <a href="#requirements" class="btn btn-lg" style="background: white; color: var(--primary-color);">
+        开始选择 ↓
+      </a>
+    </div>
+  </section>
+
+  <!-- Requirements Section -->
+  <section id="requirements" class="section">
+    <div class="container">
+      <h2 class="text-center mb-4">选择你的研究方向</h2>
+      <p class="text-center text-secondary mb-4" style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem;">
+        根据你的研究需求，我们会推荐最适合的硬件配置。点击下方卡片查看详细配置。
+      </p>
+      
+      <div class="card-grid">
+        <!-- 办公学习 -->
+        <div class="requirement-card" onclick="selectRequirement('office', this)">
+          <div class="icon">📝</div>
+          <h3>办公学习</h3>
+          <p>研一新生、熟悉命令行、Office文档处理</p>
+          <div class="specs">
+            <span>💻 CPU: 4核心+</span>
+            <span>🧠 内存: 16GB</span>
+            <span>💾 存储: 512GB SSD</span>
+            <span>🎮 显卡: 核显即可</span>
+          </div>
+          <div class="budget">¥3,000 - 4,000</div>
+        </div>
+
+        <!-- 入门科研 -->
+        <div class="requirement-card" onclick="selectRequirement('entry', this)">
+          <div class="icon">🔬</div>
+          <h3>入门科研</h3>
+          <p>R语言绑图、轻量脚本、小体积数据(&lt;10G)</p>
+          <div class="specs">
+            <span>💻 CPU: 6核12线程</span>
+            <span>🧠 内存: 32GB</span>
+            <span>💾 存储: 2TB SSD</span>
+            <span>🎮 显卡: RTX 3060 12G</span>
+          </div>
+          <div class="budget">¥5,000 - 6,000</div>
+        </div>
+
+        <!-- 转录组分析 -->
+        <div class="requirement-card" onclick="selectRequirement('transcriptome', this)">
+          <div class="icon">🧪</div>
+          <h3>转录组/表观组</h3>
+          <p>RNA-seq、ChIP-seq、ATAC-seq、分子对接</p>
+          <div class="specs">
+            <span>💻 CPU: 12核24线程</span>
+            <span>🧠 内存: 64GB</span>
+            <span>💾 存储: 1TB SSD + 4TB HDD</span>
+            <span>🎮 显卡: RTX 4070 Super</span>
+          </div>
+          <div class="budget">¥9,000 - 11,000</div>
+        </div>
+
+        <!-- 单细胞分析 -->
+        <div class="requirement-card" onclick="selectRequirement('singlecell', this)">
+          <div class="icon">🔮</div>
+          <h3>单细胞/空间组学</h3>
+          <p>Seurat/Scanpy、深度学习、AlphaFold</p>
+          <div class="specs">
+            <span>💻 CPU: 16核32线程</span>
+            <span>🧠 内存: 96GB</span>
+            <span>💾 存储: 2TB SSD + 16TB HDD</span>
+            <span>🎮 显卡: RTX 4090 (24GB)</span>
+          </div>
+          <div class="budget">¥18,000 - 25,000</div>
+        </div>
+
+        <!-- 基因组组装 -->
+        <div class="requirement-card" onclick="selectRequirement('genome', this)">
+          <div class="icon">🖥️</div>
+          <h3>基因组组装/服务器</h3>
+          <p>de novo组装、Hi-C、大规模MD模拟</p>
+          <div class="specs">
+            <span>💻 CPU: 32核64线程+</span>
+            <span>🧠 内存: 256GB ECC</span>
+            <span>💾 存储: NAS 50TB+</span>
+            <span>🎮 显卡: 双卡 4090/A6000</span>
+          </div>
+          <div class="budget">¥50,000+</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Selected Config Section -->
+  <section id="selected-config" class="section hidden">
+    <div class="container">
+      <h2 class="text-center mb-4">📦 推荐配置清单</h2>
+      <div class="config-result" id="configResult">
+        <!-- 动态生成 -->
+      </div>
+      <div class="text-center mt-4">
+        <a href="builder.html" class="btn btn-primary btn-lg">🛠️ 自定义预算配置</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tips Section -->
+  <section class="section" style="background: var(--bg-card);">
+    <div class="container">
+      <h2 class="text-center mb-4">💡 给研究生的特别建议</h2>
+      <div class="card-grid">
+        <div class="tips-card">
+          <h4>🐧 关于系统</h4>
+          <ul>
+            <li>生信分析强烈建议使用 <strong>Linux (Ubuntu 22.04/24.04)</strong></li>
+            <li>推荐配置 <strong>WSL2</strong>：在Windows下用Linux内核，既能用Office写论文，又能无缝跑生信代码</li>
+            <li>这是目前最完美的方案！</li>
+          </ul>
+        </div>
+        
+        <div class="tips-card">
+          <h4>💾 关于硬盘</h4>
+          <ul>
+            <li><strong>千万不要买QLC颗粒</strong>的固态硬盘（如P41 Plus, NV2）</li>
+            <li>生信分析的数据读写量巨大，QLC寿命短，掉速快</li>
+            <li>必须买<strong>TLC颗粒</strong>，带DRAM独立缓存的更好</li>
+          </ul>
+        </div>
+        
+        <div class="tips-card">
+          <h4>🧠 关于内存</h4>
+          <ul>
+            <li>DDR5时代，<strong>不要插满4根内存条</strong>（除非是工作站平台）</li>
+            <li>消费级CPU插满4根DDR5会导致频率暴降（甚至降到3600MHz）</li>
+            <li>需要大容量请直接买<strong>单条32G或48G</strong>的条子，插2根</li>
+          </ul>
+        </div>
+        
+        <div class="tips-card">
+          <h4>🎮 关于显卡</h4>
+          <ul>
+            <li>做科研 <strong>只买 NVIDIA</strong></li>
+            <li>AMD显卡在游戏上性价比高，但在生信软件（GROMACS）、深度学习框架（PyTorch）的支持上远不如NVIDIA成熟</li>
+            <li>不要给自己找麻烦！</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>🧬 医学生电脑硬件配置推荐工具 | 数据更新于 2025年12月</p>
+      <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+        <a href="cpu.html">CPU天梯</a> · 
+        <a href="gpu.html">GPU天梯</a> · 
+        <a href="builder.html">预算配置</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script>
+    // 移动端导航切换
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    // 选择需求
+    function selectRequirement(type, element) {
+      // 移除其他选中状态
+      document.querySelectorAll('.requirement-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      // 添加选中状态
+      element.classList.add('selected');
+      
+      // 显示配置
+      showConfig(type);
+    }
+
+    // 显示配置
+    function showConfig(type) {
+      const config = recommendedConfigs[type];
+      if (!config) return;
+      
+      const section = document.getElementById('selected-config');
+      const result = document.getElementById('configResult');
+      
+      // 计算总价
+      let total = 0;
+      for (const key in config.config) {
+        total += config.config[key].price;
+      }
+      
+      result.innerHTML = `
+        <h3>🎯 ${config.name} - 推荐配置</h3>
+        <p style="color: var(--text-light); margin-bottom: 1.5rem;">${config.description}</p>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">💻</div>
+            <div>
+              <div class="model">${config.config.cpu.model}</div>
+              <div class="spec">处理器</div>
+            </div>
+          </div>
+          <div class="price">¥${config.config.cpu.price.toLocaleString()}</div>
+        </div>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">🎮</div>
+            <div>
+              <div class="model">${config.config.gpu.model}</div>
+              <div class="spec">显卡</div>
+            </div>
+          </div>
+          <div class="price">¥${config.config.gpu.price.toLocaleString()}</div>
+        </div>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">🧠</div>
+            <div>
+              <div class="model">${config.config.memory.model}</div>
+              <div class="spec">内存</div>
+            </div>
+          </div>
+          <div class="price">¥${config.config.memory.price.toLocaleString()}</div>
+        </div>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">💾</div>
+            <div>
+              <div class="model">${config.config.ssd.model}</div>
+              <div class="spec">存储</div>
+            </div>
+          </div>
+          <div class="price">¥${config.config.ssd.price.toLocaleString()}</div>
+        </div>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">🔧</div>
+            <div>
+              <div class="model">${config.config.other.model}</div>
+              <div class="spec">其他配件</div>
+            </div>
+          </div>
+          <div class="price">¥${config.config.other.price.toLocaleString()}</div>
+        </div>
+        
+        <div class="config-total">
+          <div class="label">💰 总计预算</div>
+          <div class="price">¥${total.toLocaleString()}</div>
+        </div>
+      `;
+      
+      section.classList.remove('hidden');
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPU评价与天梯图 - 医学生电脑硬件配置推荐</title>
+  <meta name="description" content="2025年最新GPU显卡性能天梯图与价格对比，帮助生信研究人员选择最适合的显卡">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="index.html" class="nav-brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
+          生信配置助手
+        </a>
+        <button class="nav-toggle" onclick="toggleNav()">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">需求选择</a></li>
+          <li><a href="cpu.html">CPU评价</a></li>
+          <li><a href="gpu.html" class="active">GPU评价</a></li>
+          <li><a href="builder.html">预算配置</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section class="hero" style="padding: 3rem 0;">
+    <div class="container">
+      <h1>🎮 GPU 显卡性能评价与天梯图</h1>
+      <p>3DMark TSE 4K基准跑分对比 | 2025年12月更新</p>
+    </div>
+  </section>
+
+  <!-- Filter Section -->
+  <section class="section" style="padding-top: 2rem; padding-bottom: 1rem;">
+    <div class="container">
+      <div class="flex flex-wrap gap-2 justify-center">
+        <button class="btn btn-primary" onclick="filterGPU('all')">全部</button>
+        <button class="btn btn-secondary" onclick="filterGPU('nvidia')">NVIDIA</button>
+        <button class="btn btn-secondary" onclick="filterGPU('amd')">AMD</button>
+        <button class="btn btn-secondary" onclick="filterGPU('workstation')">工作站卡</button>
+        <button class="btn btn-secondary" onclick="filterGPU('vram24')">24GB+显存</button>
+        <button class="btn btn-secondary" onclick="filterGPU('vram16')">16GB显存</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GPU Tier Chart -->
+  <section class="section" style="padding-top: 1rem;">
+    <div class="container">
+      <h2 class="mb-3">🏆 GPU 性能天梯</h2>
+      <div class="tier-chart" id="gpuTierChart">
+        <!-- 动态生成 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- GPU Table -->
+  <section class="section">
+    <div class="container">
+      <h2 class="mb-3">📊 详细参数对比</h2>
+      <div class="table-container">
+        <table id="gpuTable">
+          <thead>
+            <tr>
+              <th>型号</th>
+              <th>显存</th>
+              <th>类型</th>
+              <th>TSE跑分</th>
+              <th>参考价格</th>
+              <th>定位</th>
+              <th>备注</th>
+            </tr>
+          </thead>
+          <tbody id="gpuTableBody">
+            <!-- 动态生成 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- VRAM Guide -->
+  <section class="section" style="background: var(--bg-card);">
+    <div class="container">
+      <h2 class="text-center mb-4">🧠 显存容量选择指南</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4 style="color: var(--text-secondary);">8GB 显存</h4>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            入门级，仅适合：
+          </p>
+          <ul style="color: var(--text-secondary); font-size: 0.875rem; padding-left: 1.2rem;">
+            <li>简单的R语言绑图</li>
+            <li>小规模分子对接</li>
+            <li>游戏娱乐</li>
+          </ul>
+          <p style="margin-top: 1rem;"><strong>代表：RTX 4060, RTX 5060</strong></p>
+        </div>
+        
+        <div class="card">
+          <h4 style="color: var(--primary-color);">12GB 显存</h4>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            主流选择，适合：
+          </p>
+          <ul style="color: var(--text-secondary); font-size: 0.875rem; padding-left: 1.2rem;">
+            <li>中小规模深度学习</li>
+            <li>AutoDock分子对接</li>
+            <li>小规模单细胞分析</li>
+          </ul>
+          <p style="margin-top: 1rem;"><strong>代表：RTX 3060 12G, RTX 4070 Super</strong></p>
+        </div>
+        
+        <div class="card">
+          <h4 style="color: var(--secondary-color);">16GB 显存</h4>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            进阶选择，适合：
+          </p>
+          <ul style="color: var(--text-secondary); font-size: 0.875rem; padding-left: 1.2rem;">
+            <li>中等规模LLM微调</li>
+            <li>PyTorch训练</li>
+            <li>GROMACS分子动力学</li>
+          </ul>
+          <p style="margin-top: 1rem;"><strong>代表：RTX 4060 Ti 16G, RTX 5070 Ti</strong></p>
+        </div>
+        
+        <div class="card">
+          <h4 style="color: var(--accent-color);">24GB+ 显存</h4>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            专业需求，必备于：
+          </p>
+          <ul style="color: var(--text-secondary); font-size: 0.875rem; padding-left: 1.2rem;">
+            <li>AlphaFold 蛋白折叠</li>
+            <li>大规模单细胞 (Cell2Location)</li>
+            <li>LLM全量微调</li>
+          </ul>
+          <p style="margin-top: 1rem;"><strong>代表：RTX 3090, RTX 4090, RTX 5090</strong></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recommendations -->
+  <section class="section">
+    <div class="container">
+      <h2 class="text-center mb-4">🎯 生信研究 GPU 选购建议</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4 style="color: var(--primary-color);">💰 性价比之选 (¥1300-2000)</h4>
+          <p><strong>RTX 3060 12G (二手)</strong></p>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            12GB大显存是最大亮点，跑小模型、简单AI必备。二手价格1300左右，新手入门首选。
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 style="color: var(--secondary-color);">⚡ 主流推荐 (¥3000-4500)</h4>
+          <p><strong>RTX 4070 Super / RTX 4070 Ti Super</strong></p>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            12-16GB显存，CUDA核心多，加速分子动力学模拟效率高。转录组分析的标配。
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 style="color: var(--accent-color);">🔥 24G大显存 (¥5000-15000)</h4>
+          <p><strong>RTX 3090 (二手) / RTX 4090</strong></p>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            二手3090约5000元是廉价24G方案；4090是当前最强，AlphaFold必备。
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 style="color: var(--danger-color);">🖥️ 专业工作站 (¥15000+)</h4>
+          <p><strong>RTX A6000 / RTX 6000 Ada</strong></p>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            48GB ECC显存，支持NVLINK双卡。课题组服务器、大规模MD模拟专用。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tips -->
+  <section class="section" style="background: var(--bg-card);">
+    <div class="container">
+      <div class="tips-card" style="max-width: 800px; margin: 0 auto;">
+        <h4>⚠️ 生信分析 GPU 选购要点</h4>
+        <ul>
+          <li><strong>只买 NVIDIA</strong>：PyTorch、TensorFlow、GROMACS 等主流软件对 CUDA 优化最好，AMD ROCm 生态不成熟</li>
+          <li><strong>显存优先</strong>：对于深度学习和单细胞分析，显存容量比算力更重要</li>
+          <li><strong>考虑二手</strong>：矿潮后的RTX 3090、RTX 3080 Ti价格跳水，性价比极高</li>
+          <li><strong>注意功耗</strong>：RTX 4090 功耗450W+，需要1000W电源和良好散热</li>
+          <li><strong>D版区别</strong>：RTX 4090 D 是中国特供版，阉割约5%性能，但合规可购买</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>🧬 医学生电脑硬件配置推荐工具 | 数据更新于 2025年12月</p>
+      <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+        <a href="index.html">需求选择</a> · 
+        <a href="cpu.html">CPU天梯</a> · 
+        <a href="builder.html">预算配置</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script>
+    // 移动端导航切换
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    // 当前筛选
+    let currentFilter = 'all';
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderGPUTier();
+      renderGPUTable();
+    });
+
+    // 筛选GPU
+    function filterGPU(filter) {
+      currentFilter = filter;
+      
+      // 更新按钮状态
+      document.querySelectorAll('.flex button').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-secondary');
+      });
+      event.target.classList.remove('btn-secondary');
+      event.target.classList.add('btn-primary');
+      
+      renderGPUTier();
+      renderGPUTable();
+    }
+
+    // 获取筛选后的数据
+    function getFilteredData() {
+      return gpuData.filter(gpu => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'nvidia') return gpu.model.includes('NVIDIA');
+        if (currentFilter === 'amd') return gpu.model.includes('AMD');
+        if (currentFilter === 'workstation') return gpu.tier.includes('工作站');
+        if (currentFilter === 'vram24') return gpu.vram >= 24;
+        if (currentFilter === 'vram16') return gpu.vram === 16;
+        return true;
+      });
+    }
+
+    // 渲染天梯图
+    function renderGPUTier() {
+      const container = document.getElementById('gpuTierChart');
+      const data = getFilteredData().sort((a, b) => b.score - a.score);
+      const maxScore = data[0]?.score || 1;
+      
+      container.innerHTML = data.map((gpu, index) => {
+        const tierClass = index < 3 ? 'tier-1' : index < 8 ? 'tier-2' : index < 15 ? 'tier-3' : 'tier-4';
+        let brandColor = '#76b900'; // NVIDIA green
+        if (gpu.model.includes('AMD')) brandColor = '#ed1c24';
+        if (gpu.model.includes('Intel')) brandColor = '#0071c5';
+        
+        return `
+          <div class="tier-item ${tierClass}" style="border-left-color: ${brandColor};">
+            <span class="rank">#${index + 1}</span>
+            <span class="name">
+              ${gpu.model}
+              <span class="badge badge-primary" style="margin-left: 0.5rem;">${gpu.vram}GB</span>
+            </span>
+            <span class="score">${gpu.score.toLocaleString()}</span>
+            <span class="price">¥${gpu.price.toLocaleString()}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 渲染表格
+    function renderGPUTable() {
+      const tbody = document.getElementById('gpuTableBody');
+      const data = getFilteredData().sort((a, b) => b.score - a.score);
+      
+      tbody.innerHTML = data.map(gpu => {
+        let brandColor = '#76b900';
+        if (gpu.model.includes('AMD')) brandColor = '#ed1c24';
+        if (gpu.model.includes('Intel')) brandColor = '#0071c5';
+        
+        // 显存评级颜色
+        let vramClass = 'badge-primary';
+        if (gpu.vram >= 24) vramClass = 'badge-success';
+        else if (gpu.vram >= 16) vramClass = 'badge-warning';
+        
+        return `
+          <tr>
+            <td><strong style="color: ${brandColor};">${gpu.model}</strong></td>
+            <td><span class="badge ${vramClass}">${gpu.vram}GB</span></td>
+            <td>${gpu.vramType}</td>
+            <td><strong>${gpu.score.toLocaleString()}</strong></td>
+            <td>¥${gpu.price.toLocaleString()}</td>
+            <td>${gpu.tier}</td>
+            <td style="color: var(--text-secondary); font-size: 0.8rem;">${gpu.note}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>

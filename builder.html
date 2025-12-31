@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>预算配置生成器 - 医学生电脑硬件配置推荐</title>
+  <meta name="description" content="输入预算，一键生成最适合生信研究的电脑硬件配置方案">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="index.html" class="nav-brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
+          生信配置助手
+        </a>
+        <button class="nav-toggle" onclick="toggleNav()">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">需求选择</a></li>
+          <li><a href="cpu.html">CPU评价</a></li>
+          <li><a href="gpu.html">GPU评价</a></li>
+          <li><a href="builder.html" class="active">预算配置</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section class="hero" style="padding: 3rem 0;">
+    <div class="container">
+      <h1>🛠️ 预算配置生成器</h1>
+      <p>输入你的预算和需求，一键生成最优配置方案</p>
+    </div>
+  </section>
+
+  <!-- Builder Section -->
+  <section class="section">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        
+        <!-- Left: Form -->
+        <div class="builder-form">
+          <h3 class="mb-3">📝 配置参数</h3>
+          
+          <div class="form-group">
+            <label for="budget">💰 总预算 (元)</label>
+            <input type="range" id="budget" min="3000" max="80000" value="10000" step="1000" oninput="updateBudgetDisplay()">
+            <div class="range-value">
+              <span>¥3,000</span>
+              <span id="budgetValue" style="font-weight: 700; color: var(--primary-color);">¥10,000</span>
+              <span>¥80,000</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="purpose">🎯 使用场景</label>
+            <select id="purpose" onchange="generateConfig()">
+              <option value="office">办公学习 - 熟悉命令行、Office文档</option>
+              <option value="entry">入门科研 - R语言绑图、小体积数据</option>
+              <option value="transcriptome" selected>转录组分析 - RNA-seq、ChIP-seq</option>
+              <option value="singlecell">单细胞组学 - Seurat、深度学习</option>
+              <option value="genome">基因组组装 - de novo、Hi-C</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="gpuPriority">🎮 显卡优先级</label>
+            <select id="gpuPriority" onchange="generateConfig()">
+              <option value="balanced">均衡配置</option>
+              <option value="gpu-heavy">显卡优先 (深度学习/AI)</option>
+              <option value="cpu-heavy">CPU优先 (多线程分析)</option>
+              <option value="memory-heavy">内存优先 (单细胞大数据)</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="usedGpu" onchange="generateConfig()">
+              考虑二手显卡 (性价比更高)
+            </label>
+          </div>
+          
+          <button class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;" onclick="generateConfig()">
+            🔄 重新生成配置
+          </button>
+        </div>
+        
+        <!-- Right: Result -->
+        <div>
+          <div class="config-result" id="configResult">
+            <h3>🎯 推荐配置</h3>
+            <p style="color: var(--text-light);">调整左侧参数后点击生成</p>
+          </div>
+          
+          <!-- Export Buttons -->
+          <div class="flex gap-2 mt-3">
+            <button class="btn btn-secondary" onclick="copyConfig()">📋 复制配置</button>
+            <button class="btn btn-secondary" onclick="shareConfig()">🔗 分享链接</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Presets -->
+  <section class="section" style="background: var(--bg-card);">
+    <div class="container">
+      <h2 class="text-center mb-4">⚡ 快速预设方案</h2>
+      <div class="card-grid">
+        <div class="card" style="cursor: pointer;" onclick="applyPreset('office')">
+          <h4>📝 办公入门</h4>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">¥3,500 左右</p>
+          <p style="font-size: 0.8rem; color: var(--text-light);">i3-12100F + 核显 + 16GB + 512GB SSD</p>
+        </div>
+        
+        <div class="card" style="cursor: pointer;" onclick="applyPreset('entry')">
+          <h4>🔬 科研入门</h4>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">¥5,500 左右</p>
+          <p style="font-size: 0.8rem; color: var(--text-light);">R5 7500F + RTX 3060 + 32GB + 2TB SSD</p>
+        </div>
+        
+        <div class="card" style="cursor: pointer;" onclick="applyPreset('transcriptome')">
+          <h4>🧪 转录组主流</h4>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">¥10,800 左右</p>
+          <p style="font-size: 0.8rem; color: var(--text-light);">R9 7900X + RTX 4070S + 64GB + 1TB+4TB</p>
+        </div>
+        
+        <div class="card" style="cursor: pointer;" onclick="applyPreset('singlecell')">
+          <h4>🔮 单细胞高配</h4>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">¥25,500 左右</p>
+          <p style="font-size: 0.8rem; color: var(--text-light);">R9 9950X + RTX 4090 + 96GB + 2TB+16TB</p>
+        </div>
+        
+        <div class="card" style="cursor: pointer;" onclick="applyPreset('genome')">
+          <h4>🖥️ 实验室服务器</h4>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">¥70,000+</p>
+          <p style="font-size: 0.8rem; color: var(--text-light);">TR 7970X + 双4090 + 256GB ECC + NAS</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Component Selection -->
+  <section class="section">
+    <div class="container">
+      <h2 class="text-center mb-4">🔧 手动调整配件</h2>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        
+        <!-- CPU Selection -->
+        <div class="card">
+          <h4>💻 处理器 (CPU)</h4>
+          <select id="manualCpu" class="form-group" style="width: 100%; margin-top: 1rem;" onchange="updateManualConfig()">
+            <!-- 动态生成 -->
+          </select>
+          <p id="cpuPrice" style="color: var(--secondary-color); font-weight: 500; margin-top: 0.5rem;"></p>
+        </div>
+        
+        <!-- GPU Selection -->
+        <div class="card">
+          <h4>🎮 显卡 (GPU)</h4>
+          <select id="manualGpu" class="form-group" style="width: 100%; margin-top: 1rem;" onchange="updateManualConfig()">
+            <!-- 动态生成 -->
+          </select>
+          <p id="gpuPrice" style="color: var(--secondary-color); font-weight: 500; margin-top: 0.5rem;"></p>
+        </div>
+        
+        <!-- Memory Selection -->
+        <div class="card">
+          <h4>🧠 内存 (RAM)</h4>
+          <select id="manualMemory" class="form-group" style="width: 100%; margin-top: 1rem;" onchange="updateManualConfig()">
+            <option value="16|250">16GB DDR4 - ¥250</option>
+            <option value="32|650" selected>32GB DDR5 (16G×2) - ¥650</option>
+            <option value="64|1300">64GB DDR5 (32G×2) - ¥1,300</option>
+            <option value="96|2200">96GB DDR5 (48G×2) - ¥2,200</option>
+            <option value="128|2800">128GB DDR5 (32G×4) - ¥2,800</option>
+            <option value="256|10000">256GB ECC DDR5 - ¥10,000</option>
+          </select>
+          <p id="memoryPrice" style="color: var(--secondary-color); font-weight: 500; margin-top: 0.5rem;"></p>
+        </div>
+        
+        <!-- SSD Selection -->
+        <div class="card">
+          <h4>💾 固态硬盘 (SSD)</h4>
+          <select id="manualSsd" class="form-group" style="width: 100%; margin-top: 1rem;" onchange="updateManualConfig()">
+            <!-- 动态生成 -->
+          </select>
+          <p id="ssdPrice" style="color: var(--secondary-color); font-weight: 500; margin-top: 0.5rem;"></p>
+        </div>
+        
+      </div>
+      
+      <!-- Manual Total -->
+      <div class="config-result mt-4" style="max-width: 600px; margin: 2rem auto 0;">
+        <div class="config-total">
+          <div class="label">💰 手动配置总价 (不含主板/电源/散热)</div>
+          <div class="price" id="manualTotal">¥0</div>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>🧬 医学生电脑硬件配置推荐工具 | 数据更新于 2025年12月</p>
+      <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+        <a href="index.html">需求选择</a> · 
+        <a href="cpu.html">CPU天梯</a> · 
+        <a href="gpu.html">GPU天梯</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script>
+    // 移动端导航切换
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    // 当前配置
+    let currentConfig = null;
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      initSelects();
+      generateConfig();
+    });
+
+    // 初始化下拉框
+    function initSelects() {
+      // CPU
+      const cpuSelect = document.getElementById('manualCpu');
+      cpuSelect.innerHTML = cpuData
+        .filter(c => !c.tier.includes('HEDT') && !c.tier.includes('工作站'))
+        .sort((a, b) => a.price - b.price)
+        .map(c => `<option value="${c.model}|${c.price}">${c.brand} ${c.model} (${c.cores}C/${c.threads}T) - ¥${c.price.toLocaleString()}</option>`)
+        .join('');
+      
+      // GPU
+      const gpuSelect = document.getElementById('manualGpu');
+      gpuSelect.innerHTML = '<option value="无|0">无独立显卡 (核显) - ¥0</option>' +
+        gpuData
+          .filter(g => g.model.includes('NVIDIA') && !g.tier.includes('工作站'))
+          .sort((a, b) => a.price - b.price)
+          .map(g => `<option value="${g.model}|${g.price}">${g.model} (${g.vram}GB) - ¥${g.price.toLocaleString()}</option>`)
+          .join('');
+      
+      // SSD
+      const ssdSelect = document.getElementById('manualSsd');
+      ssdSelect.innerHTML = ssdData
+        .filter(s => s.price < 2000)
+        .sort((a, b) => a.price - b.price)
+        .map(s => `<option value="${s.model}|${s.price}">${s.model} ${s.capacity} - ¥${s.price.toLocaleString()}</option>`)
+        .join('');
+      
+      updateManualConfig();
+    }
+
+    // 更新预算显示
+    function updateBudgetDisplay() {
+      const budget = document.getElementById('budget').value;
+      document.getElementById('budgetValue').textContent = '¥' + parseInt(budget).toLocaleString();
+      generateConfig();
+    }
+
+    // 应用预设
+    function applyPreset(type) {
+      const presets = {
+        office: { budget: 3500, purpose: 'office' },
+        entry: { budget: 5500, purpose: 'entry' },
+        transcriptome: { budget: 10800, purpose: 'transcriptome' },
+        singlecell: { budget: 25500, purpose: 'singlecell' },
+        genome: { budget: 70000, purpose: 'genome' }
+      };
+      
+      const preset = presets[type];
+      document.getElementById('budget').value = preset.budget;
+      document.getElementById('budgetValue').textContent = '¥' + preset.budget.toLocaleString();
+      document.getElementById('purpose').value = preset.purpose;
+      generateConfig();
+      
+      // 滚动到配置结果
+      document.getElementById('configResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // 生成配置
+    function generateConfig() {
+      const budget = parseInt(document.getElementById('budget').value);
+      const purpose = document.getElementById('purpose').value;
+      const priority = document.getElementById('gpuPriority').value;
+      const useUsed = document.getElementById('usedGpu').checked;
+      
+      // 根据用途确定预设配置
+      const preset = recommendedConfigs[purpose];
+      if (!preset) return;
+      
+      // 计算预算比例调整
+      const presetTotal = Object.values(preset.config).reduce((sum, item) => sum + item.price, 0);
+      const ratio = budget / presetTotal;
+      
+      // 智能选择配件
+      let config = {
+        cpu: selectBestCPU(budget, purpose, priority, ratio),
+        gpu: selectBestGPU(budget, purpose, priority, ratio, useUsed),
+        memory: selectBestMemory(budget, purpose, priority, ratio),
+        ssd: selectBestSSD(budget, purpose, ratio),
+        other: estimateOtherCost(budget, purpose)
+      };
+      
+      currentConfig = config;
+      renderConfig(config, purpose);
+    }
+
+    // 选择最佳CPU
+    function selectBestCPU(budget, purpose, priority, ratio) {
+      let cpuBudget = budget * 0.15;
+      if (priority === 'cpu-heavy') cpuBudget = budget * 0.25;
+      if (priority === 'gpu-heavy') cpuBudget = budget * 0.12;
+      
+      // 根据用途设置最低核心数
+      let minCores = 4;
+      if (purpose === 'transcriptome') minCores = 8;
+      if (purpose === 'singlecell') minCores = 12;
+      if (purpose === 'genome') minCores = 24;
+      
+      const candidates = cpuData
+        .filter(c => c.price <= cpuBudget * 1.3 && c.cores >= minCores)
+        .sort((a, b) => {
+          // 优先选择性价比高的
+          const valueA = a.score / a.price;
+          const valueB = b.score / b.price;
+          return valueB - valueA;
+        });
+      
+      return candidates[0] || cpuData.find(c => c.price <= cpuBudget) || cpuData[cpuData.length - 1];
+    }
+
+    // 选择最佳GPU
+    function selectBestGPU(budget, purpose, priority, ratio, useUsed) {
+      if (purpose === 'office') {
+        return { model: '核显 / 亮机卡', price: 0, vram: 0 };
+      }
+      
+      let gpuBudget = budget * 0.30;
+      if (priority === 'gpu-heavy') gpuBudget = budget * 0.45;
+      if (priority === 'cpu-heavy') gpuBudget = budget * 0.20;
+      
+      // 根据用途设置最低显存
+      let minVram = 8;
+      if (purpose === 'transcriptome') minVram = 12;
+      if (purpose === 'singlecell') minVram = 16;
+      if (purpose === 'genome') minVram = 24;
+      
+      // 只选NVIDIA (生信必须)
+      let candidates = gpuData
+        .filter(g => 
+          g.model.includes('NVIDIA') && 
+          g.price <= gpuBudget * 1.2 && 
+          g.vram >= minVram &&
+          !g.tier.includes('工作站')
+        )
+        .sort((a, b) => {
+          // 优先大显存，其次性价比
+          if (b.vram !== a.vram) return b.vram - a.vram;
+          return (b.score / b.price) - (a.score / a.price);
+        });
+      
+      // 如果预算不够，降低显存要求
+      if (candidates.length === 0) {
+        candidates = gpuData
+          .filter(g => g.model.includes('NVIDIA') && g.price <= gpuBudget * 1.5)
+          .sort((a, b) => b.vram - a.vram);
+      }
+      
+      return candidates[0] || { model: 'RTX 3060 12G', price: 1382, vram: 12 };
+    }
+
+    // 选择最佳内存
+    function selectBestMemory(budget, purpose, priority, ratio) {
+      let memBudget = budget * 0.10;
+      if (priority === 'memory-heavy') memBudget = budget * 0.18;
+      
+      // 根据用途确定容量
+      let capacity = '16GB';
+      let price = 250;
+      
+      if (purpose === 'entry' || budget >= 5000) { capacity = '32GB'; price = 650; }
+      if (purpose === 'transcriptome' || budget >= 9000) { capacity = '64GB'; price = 1300; }
+      if (purpose === 'singlecell' || budget >= 18000) { capacity = '96GB'; price = 2200; }
+      if (purpose === 'genome' || budget >= 50000) { capacity = '256GB ECC'; price = 10000; }
+      
+      // 预算不够则降级
+      while (price > memBudget * 1.5 && price > 250) {
+        if (capacity === '256GB ECC') { capacity = '128GB'; price = 2800; }
+        else if (capacity === '128GB') { capacity = '96GB'; price = 2200; }
+        else if (capacity === '96GB') { capacity = '64GB'; price = 1300; }
+        else if (capacity === '64GB') { capacity = '32GB'; price = 650; }
+        else { capacity = '16GB'; price = 250; break; }
+      }
+      
+      return { model: capacity + ' DDR5', price: price, capacity: capacity };
+    }
+
+    // 选择最佳SSD
+    function selectBestSSD(budget, purpose, ratio) {
+      let ssdBudget = budget * 0.12;
+      
+      const candidates = ssdData
+        .filter(s => s.price <= ssdBudget * 1.3)
+        .sort((a, b) => b.read4k - a.read4k);
+      
+      return candidates[0] || ssdData.find(s => s.price <= ssdBudget) || { model: '致态 TiPlus 7100 1TB', price: 499, capacity: '1TB' };
+    }
+
+    // 估算其他配件成本
+    function estimateOtherCost(budget, purpose) {
+      // 主板+电源+散热+机箱
+      let cost = 1500;
+      if (budget >= 8000) cost = 2000;
+      if (budget >= 15000) cost = 3000;
+      if (budget >= 30000) cost = 5000;
+      if (budget >= 50000) cost = 10000;
+      
+      return { model: '主板+电源+散热+机箱', price: cost };
+    }
+
+    // 渲染配置
+    function renderConfig(config, purpose) {
+      const result = document.getElementById('configResult');
+      const purposeNames = {
+        office: '办公学习',
+        entry: '入门科研',
+        transcriptome: '转录组分析',
+        singlecell: '单细胞组学',
+        genome: '基因组组装'
+      };
+      
+      const total = (config.cpu?.price || 0) + 
+                    (config.gpu?.price || 0) + 
+                    (config.memory?.price || 0) + 
+                    (config.ssd?.price || 0) +
+                    (config.other?.price || 0);
+      
+      result.innerHTML = `
+        <h3>🎯 ${purposeNames[purpose]} - 智能推荐</h3>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">💻</div>
+            <div>
+              <div class="model">${config.cpu?.brand || ''} ${config.cpu?.model || '待选'}</div>
+              <div class="spec">${config.cpu?.cores || 0}核${config.cpu?.threads || 0}线程 | R23: ${(config.cpu?.score || 0).toLocaleString()}</div>
+            </div>
+          </div>
+          <div class="price">¥${(config.cpu?.price || 0).toLocaleString()}</div>
+        </div>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">🎮</div>
+            <div>
+              <div class="model">${config.gpu?.model || '待选'}</div>
+              <div class="spec">${config.gpu?.vram ? config.gpu.vram + 'GB 显存' : '无独显'}</div>
+            </div>
+          </div>
+          <div class="price">¥${(config.gpu?.price || 0).toLocaleString()}</div>
+        </div>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">🧠</div>
+            <div>
+              <div class="model">${config.memory?.model || '待选'}</div>
+              <div class="spec">内存</div>
+            </div>
+          </div>
+          <div class="price">¥${(config.memory?.price || 0).toLocaleString()}</div>
+        </div>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">💾</div>
+            <div>
+              <div class="model">${config.ssd?.model || '待选'} ${config.ssd?.capacity || ''}</div>
+              <div class="spec">4K读取: ${config.ssd?.read4k || '-'} MiB/s</div>
+            </div>
+          </div>
+          <div class="price">¥${(config.ssd?.price || 0).toLocaleString()}</div>
+        </div>
+        
+        <div class="config-item">
+          <div class="label">
+            <div class="icon">🔧</div>
+            <div>
+              <div class="model">${config.other?.model || '其他配件'}</div>
+              <div class="spec">预估费用</div>
+            </div>
+          </div>
+          <div class="price">¥${(config.other?.price || 0).toLocaleString()}</div>
+        </div>
+        
+        <div class="config-total">
+          <div class="label">💰 预估总价</div>
+          <div class="price">¥${total.toLocaleString()}</div>
+        </div>
+      `;
+    }
+
+    // 更新手动配置
+    function updateManualConfig() {
+      const cpu = document.getElementById('manualCpu').value.split('|');
+      const gpu = document.getElementById('manualGpu').value.split('|');
+      const memory = document.getElementById('manualMemory').value.split('|');
+      const ssd = document.getElementById('manualSsd').value.split('|');
+      
+      const total = parseInt(cpu[1] || 0) + parseInt(gpu[1] || 0) + parseInt(memory[1] || 0) + parseInt(ssd[1] || 0);
+      
+      document.getElementById('cpuPrice').textContent = '¥' + parseInt(cpu[1] || 0).toLocaleString();
+      document.getElementById('gpuPrice').textContent = '¥' + parseInt(gpu[1] || 0).toLocaleString();
+      document.getElementById('memoryPrice').textContent = '¥' + parseInt(memory[1] || 0).toLocaleString();
+      document.getElementById('ssdPrice').textContent = '¥' + parseInt(ssd[1] || 0).toLocaleString();
+      document.getElementById('manualTotal').textContent = '¥' + total.toLocaleString();
+    }
+
+    // 复制配置
+    function copyConfig() {
+      if (!currentConfig) {
+        alert('请先生成配置');
+        return;
+      }
+      
+      const purpose = document.getElementById('purpose').value;
+      const purposeNames = {
+        office: '办公学习',
+        entry: '入门科研',
+        transcriptome: '转录组分析',
+        singlecell: '单细胞组学',
+        genome: '基因组组装'
+      };
+      
+      const total = (currentConfig.cpu?.price || 0) + 
+                    (currentConfig.gpu?.price || 0) + 
+                    (currentConfig.memory?.price || 0) + 
+                    (currentConfig.ssd?.price || 0) +
+                    (currentConfig.other?.price || 0);
+      
+      const text = `【生信配置助手 - ${purposeNames[purpose]}】
+CPU: ${currentConfig.cpu?.brand || ''} ${currentConfig.cpu?.model || ''} - ¥${currentConfig.cpu?.price || 0}
+GPU: ${currentConfig.gpu?.model || '无'} - ¥${currentConfig.gpu?.price || 0}
+内存: ${currentConfig.memory?.model || ''} - ¥${currentConfig.memory?.price || 0}
+SSD: ${currentConfig.ssd?.model || ''} - ¥${currentConfig.ssd?.price || 0}
+其他: ${currentConfig.other?.model || ''} - ¥${currentConfig.other?.price || 0}
+——————————
+总价: ¥${total.toLocaleString()}`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('配置已复制到剪贴板！');
+      }).catch(() => {
+        // 降级方案
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('配置已复制到剪贴板！');
+      });
+    }
+
+    // 分享配置
+    function shareConfig() {
+      const budget = document.getElementById('budget').value;
+      const purpose = document.getElementById('purpose').value;
+      const url = window.location.origin + window.location.pathname + 
+                  `?budget=${budget}&purpose=${purpose}`;
+      
+      navigator.clipboard.writeText(url).then(() => {
+        alert('分享链接已复制！');
+      }).catch(() => {
+        prompt('复制以下链接分享：', url);
+      });
+    }
+
+    // 从URL参数恢复配置
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const budget = params.get('budget');
+      const purpose = params.get('purpose');
+      
+      if (budget) {
+        document.getElementById('budget').value = budget;
+        document.getElementById('budgetValue').textContent = '¥' + parseInt(budget).toLocaleString();
+      }
+      if (purpose) {
+        document.getElementById('purpose').value = purpose;
+      }
+    })();
+  </script>
+</body>
+</html>

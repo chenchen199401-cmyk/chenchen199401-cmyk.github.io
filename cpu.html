@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPU评价与天梯图 - 医学生电脑硬件配置推荐</title>
+  <meta name="description" content="2025年最新CPU性能天梯图与价格对比，帮助生信研究人员选择最适合的处理器">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="index.html" class="nav-brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
+          生信配置助手
+        </a>
+        <button class="nav-toggle" onclick="toggleNav()">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">需求选择</a></li>
+          <li><a href="cpu.html" class="active">CPU评价</a></li>
+          <li><a href="gpu.html">GPU评价</a></li>
+          <li><a href="builder.html">预算配置</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section class="hero" style="padding: 3rem 0;">
+    <div class="container">
+      <h1>💻 CPU 性能评价与天梯图</h1>
+      <p>Cinebench R23 多核跑分对比 | 2025年12月更新</p>
+    </div>
+  </section>
+
+  <!-- Filter Section -->
+  <section class="section" style="padding-top: 2rem; padding-bottom: 1rem;">
+    <div class="container">
+      <div class="flex flex-wrap gap-2 justify-center">
+        <button class="btn btn-primary" onclick="filterCPU('all')">全部</button>
+        <button class="btn btn-secondary" onclick="filterCPU('AMD')">AMD</button>
+        <button class="btn btn-secondary" onclick="filterCPU('Intel')">Intel</button>
+        <button class="btn btn-secondary" onclick="filterCPU('workstation')">工作站级</button>
+        <button class="btn btn-secondary" onclick="filterCPU('consumer')">消费级</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CPU Tier Chart -->
+  <section class="section" style="padding-top: 1rem;">
+    <div class="container">
+      <h2 class="mb-3">🏆 CPU 性能天梯</h2>
+      <div class="tier-chart" id="cpuTierChart">
+        <!-- 动态生成 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CPU Table -->
+  <section class="section">
+    <div class="container">
+      <h2 class="mb-3">📊 详细参数对比</h2>
+      <div class="table-container">
+        <table id="cpuTable">
+          <thead>
+            <tr>
+              <th>品牌</th>
+              <th>型号</th>
+              <th>定位</th>
+              <th>核心/线程</th>
+              <th>R23多核</th>
+              <th>参考价格</th>
+              <th>性价比</th>
+              <th>备注</th>
+            </tr>
+          </thead>
+          <tbody id="cpuTableBody">
+            <!-- 动态生成 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recommendations -->
+  <section class="section" style="background: var(--bg-card);">
+    <div class="container">
+      <h2 class="text-center mb-4">🎯 生信研究 CPU 选购建议</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4 style="color: var(--primary-color);">💰 入门预算 (¥500-800)</h4>
+          <p><strong>推荐：AMD Ryzen 5 7500F</strong></p>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            6核12线程，性价比之王。单核性能强，跑R语言绑图快。DDR5平台，未来升级空间大。
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 style="color: var(--secondary-color);">⚡ 主流选择 (¥1500-2500)</h4>
+          <p><strong>推荐：AMD Ryzen 9 7900X / 9900X</strong></p>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            12核24线程，多核性能完美覆盖RNA-seq等需求。比Intel同价位多核性能更强，稳定性更好。
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 style="color: var(--accent-color);">🔥 高端旗舰 (¥3000-4500)</h4>
+          <p><strong>推荐：AMD Ryzen 9 9950X</strong></p>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            16核32线程，消费级多核天花板。单细胞分析、大规模数据处理首选。
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 style="color: var(--danger-color);">🖥️ 服务器级 (¥10000+)</h4>
+          <p><strong>推荐：AMD Threadripper 7970X</strong></p>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;">
+            32核64线程，支持ECC内存。基因组组装、课题组服务器首选。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tips -->
+  <section class="section">
+    <div class="container">
+      <div class="tips-card" style="max-width: 800px; margin: 0 auto;">
+        <h4>⚠️ 生信分析 CPU 选购要点</h4>
+        <ul>
+          <li><strong>核心数优先</strong>：生信分析（比对、组装）是典型的多线程任务，核心数是硬指标</li>
+          <li><strong>AMD 更稳定</strong>：最近两代Intel（13/14代）存在电压不稳问题，建议新装机首选AMD</li>
+          <li><strong>AVX-512 加成</strong>：部分生信软件对AVX-512指令集有优化，AMD Zen4+ 原生支持</li>
+          <li><strong>不追新</strong>：上一代CPU往往性价比更高，如7900X vs 9900X</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>🧬 医学生电脑硬件配置推荐工具 | 数据更新于 2025年12月</p>
+      <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+        <a href="index.html">需求选择</a> · 
+        <a href="gpu.html">GPU天梯</a> · 
+        <a href="builder.html">预算配置</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script>
+    // 移动端导航切换
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    // 当前筛选
+    let currentFilter = 'all';
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderCPUTier();
+      renderCPUTable();
+    });
+
+    // 筛选CPU
+    function filterCPU(filter) {
+      currentFilter = filter;
+      
+      // 更新按钮状态
+      document.querySelectorAll('.flex button').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-secondary');
+      });
+      event.target.classList.remove('btn-secondary');
+      event.target.classList.add('btn-primary');
+      
+      renderCPUTier();
+      renderCPUTable();
+    }
+
+    // 获取筛选后的数据
+    function getFilteredData() {
+      return cpuData.filter(cpu => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'AMD') return cpu.brand === 'AMD';
+        if (currentFilter === 'Intel') return cpu.brand === 'Intel';
+        if (currentFilter === 'workstation') return cpu.tier.includes('工作站') || cpu.tier.includes('HEDT');
+        if (currentFilter === 'consumer') return cpu.tier.includes('消费级');
+        return true;
+      });
+    }
+
+    // 渲染天梯图
+    function renderCPUTier() {
+      const container = document.getElementById('cpuTierChart');
+      const data = getFilteredData().sort((a, b) => b.score - a.score);
+      const maxScore = data[0]?.score || 1;
+      
+      container.innerHTML = data.map((cpu, index) => {
+        const width = (cpu.score / maxScore * 100).toFixed(1);
+        const tierClass = index < 3 ? 'tier-1' : index < 8 ? 'tier-2' : index < 15 ? 'tier-3' : 'tier-4';
+        const brandColor = cpu.brand === 'AMD' ? '#ed1c24' : '#0071c5';
+        
+        return `
+          <div class="tier-item ${tierClass}" style="border-left-color: ${brandColor};">
+            <span class="rank">#${index + 1}</span>
+            <span class="name">
+              <span class="badge" style="background: ${brandColor}20; color: ${brandColor};">${cpu.brand}</span>
+              ${cpu.model}
+            </span>
+            <span class="score">${cpu.score.toLocaleString()}</span>
+            <span class="price">¥${cpu.price.toLocaleString()}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 渲染表格
+    function renderCPUTable() {
+      const tbody = document.getElementById('cpuTableBody');
+      const data = getFilteredData().sort((a, b) => b.score - a.score);
+      
+      tbody.innerHTML = data.map(cpu => {
+        const valueRatio = (cpu.score / cpu.price).toFixed(2);
+        const brandColor = cpu.brand === 'AMD' ? '#ed1c24' : '#0071c5';
+        
+        // 性价比评级
+        let valueClass = 'badge-primary';
+        let valueLabel = '一般';
+        if (valueRatio > 15) { valueClass = 'badge-success'; valueLabel = '极高'; }
+        else if (valueRatio > 10) { valueClass = 'badge-success'; valueLabel = '高'; }
+        else if (valueRatio > 5) { valueClass = 'badge-warning'; valueLabel = '中等'; }
+        else if (valueRatio < 2) { valueClass = 'badge-danger'; valueLabel = '低'; }
+        
+        return `
+          <tr>
+            <td><span class="badge" style="background: ${brandColor}20; color: ${brandColor};">${cpu.brand}</span></td>
+            <td><strong>${cpu.model}</strong></td>
+            <td>${cpu.tier}</td>
+            <td>${cpu.cores}C / ${cpu.threads}T</td>
+            <td><strong>${cpu.score.toLocaleString()}</strong></td>
+            <td>¥${cpu.price.toLocaleString()}</td>
+            <td><span class="badge ${valueClass}">${valueLabel}</span></td>
+            <td style="color: var(--text-secondary); font-size: 0.8rem;">${cpu.note}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
