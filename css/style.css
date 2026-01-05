@@ -242,12 +242,13 @@ a:hover {
 }
 
 .hero-carousel-viewport {
-  width: min(1100px, 100%);
-  height: 360px;
+  width: min(1200px, 100%);
+  height: 440px;
   border-radius: 1.25rem;
   overflow: hidden;
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.55);
   transform: translateZ(0);
+  background: rgba(15, 23, 42, 0.55);
 }
 
 .hero-carousel-track {
@@ -265,7 +266,7 @@ a:hover {
 .hero-slide img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* show full image without cropping */
   filter: saturate(1.1) contrast(1.1) brightness(0.88);
 }
 
@@ -293,7 +294,7 @@ a:hover {
   }
 
   .hero-carousel-viewport {
-    height: 230px;
+    height: 280px;
   }
 }
 
