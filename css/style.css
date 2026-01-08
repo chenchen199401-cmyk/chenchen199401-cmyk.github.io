@@ -298,11 +298,7 @@ a:hover {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hero-carousel-track {
-    animation: none;
-  }
-}
+/* 强制所有用户启用轮播动画：不再在 prefers-reduced-motion 下禁用 */
 
 /* (legacy) hero images: keep for compatibility if any page still uses them */
 .hero-img {
