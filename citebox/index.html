@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CiteBox Static</title>
+    <meta name="description" content="CiteBox 静态版：可直接部署到 GitHub Pages 的本地文献管理工具。">
+    <link rel="icon" type="image/svg+xml" href="./static/img/citebox-icon.svg">
+    <link rel="stylesheet" href="./static/css/app.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="site-header">
+            <div class="header-inner">
+                <a class="brand" href="./">
+                    <img src="./static/img/citebox-icon.svg" alt="" aria-hidden="true">
+                    <div>
+                        <strong>CiteBox</strong>
+                        <span>Static Research Desk</span>
+                    </div>
+                </a>
+                <nav class="top-nav" aria-label="主导航">
+                    <a href="#library">文献库</a>
+                    <a href="#notes">笔记</a>
+                    <a href="#organize">标签与分组</a>
+                    <a href="#backup">备份恢复</a>
+                </nav>
+                <button id="topUploadButton" class="btn btn-primary" type="button">上传 PDF</button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="hero-panel">
+                <div class="hero-copy">
+                    <p class="eyebrow">GitHub Pages Ready</p>
+                    <h1>把文献库带到浏览器里</h1>
+                    <p>
+                        这一版不依赖 Go 服务、SQLite 或额外后端。PDF、标签、分组、笔记和备份都保存在浏览器本地，
+                        适合直接发布到 <code>/citebox/</code>。
+                    </p>
+                    <div class="hero-actions">
+                        <button id="heroUploadButton" class="btn btn-primary" type="button">开始导入 PDF</button>
+                        <a class="btn btn-secondary" href="#backup">查看备份与恢复</a>
+                    </div>
+                </div>
+                <div class="hero-stats" id="summaryStats"></div>
+            </section>
+
+            <section id="library" class="content-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Library</p>
+                        <h2>上传、筛选并管理文献</h2>
+                    </div>
+                    <p class="section-copy">支持浏览器本地持久化、关键词检索、单分组归类、多标签标记和 PDF 阅读。</p>
+                </div>
+
+                <div class="library-grid">
+                    <aside class="sidebar-stack">
+                        <article class="panel upload-panel">
+                            <div class="panel-head">
+                                <div>
+                                    <h3>上传 PDF</h3>
+                                    <p>支持一次导入多篇 PDF，并自动提取标题、页数和文本摘要。</p>
+                                </div>
+                            </div>
+                            <button id="uploadDropzone" class="upload-dropzone" type="button">
+                                <span class="dropzone-icon">+</span>
+                                <strong>拖拽 PDF 到这里</strong>
+                                <span>或点击选择文件</span>
+                            </button>
+                            <p class="helper-text">导入后即刻写入浏览器本地数据库，不会上传到远端服务。</p>
+                        </article>
+
+                        <article class="panel filter-panel">
+                            <div class="panel-head">
+                                <div>
+                                    <h3>筛选条件</h3>
+                                    <p>按标题、笔记、文本摘要、分组和标签快速检索。</p>
+                                </div>
+                                <button id="clearFiltersButton" class="btn btn-ghost" type="button">清空</button>
+                            </div>
+                            <div class="field-stack">
+                                <label class="field">
+                                    <span>关键词</span>
+                                    <input id="keywordInput" type="search" placeholder="标题、笔记、文本摘要">
+                                </label>
+                                <label class="field">
+                                    <span>分组</span>
+                                    <select id="groupFilter">
+                                        <option value="">全部分组</option>
+                                    </select>
+                                </label>
+                                <label class="field">
+                                    <span>标签</span>
+                                    <select id="tagFilter">
+                                        <option value="">全部标签</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div id="filterSummary" class="filter-summary"></div>
+                        </article>
+                    </aside>
+
+                    <section class="content-stack">
+                        <article class="panel paper-list-panel">
+                            <div class="panel-head">
+                                <div>
+                                    <h3>文献列表</h3>
+                                    <p id="paperListMeta">正在载入本地文献库…</p>
+                                </div>
+                            </div>
+                            <div id="paperList" class="paper-list"></div>
+                        </article>
+                    </section>
+
+                    <aside class="detail-column">
+                        <article class="panel detail-panel">
+                            <div class="panel-head">
+                                <div>
+                                    <h3>文献详情</h3>
+                                    <p>选中一篇文献后即可编辑标题、标签、分组与笔记。</p>
+                                </div>
+                            </div>
+                            <div id="paperDetail" class="paper-detail-empty">
+                                <p>还没有选中文献。上传或点击左侧文献卡片后，这里会显示详情。</p>
+                            </div>
+                        </article>
+                    </aside>
+                </div>
+            </section>
+
+            <section id="notes" class="content-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Notes</p>
+                        <h2>集中浏览已写过的笔记</h2>
+                    </div>
+                    <p class="section-copy">这里会自动汇总所有已填写笔记的文献，方便回看与继续整理。</p>
+                </div>
+                <div id="notesList" class="notes-grid"></div>
+            </section>
+
+            <section id="organize" class="content-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Organize</p>
+                        <h2>管理分组和标签</h2>
+                    </div>
+                    <p class="section-copy">静态版保留文献管理核心能力：单分组归类、多标签标记以及筛选。</p>
+                </div>
+                <div class="manager-grid">
+                    <article class="panel manager-panel">
+                        <div class="panel-head">
+                            <div>
+                                <h3>分组</h3>
+                                <p>每篇文献只能归入一个分组，适合按项目或主题分类。</p>
+                            </div>
+                        </div>
+                        <form id="groupForm" class="manager-form">
+                            <input id="groupEditId" type="hidden">
+                            <label class="field">
+                                <span>分组名称</span>
+                                <input id="groupNameInput" type="text" maxlength="40" placeholder="例如：肿瘤免疫 / 单细胞">
+                            </label>
+                            <label class="field">
+                                <span>说明</span>
+                                <textarea id="groupDescriptionInput" rows="3" placeholder="可选，记录这个分组的研究背景或用途"></textarea>
+                            </label>
+                            <div class="inline-actions">
+                                <button class="btn btn-primary" type="submit">保存分组</button>
+                                <button id="groupCancelEditButton" class="btn btn-secondary hidden" type="button">取消编辑</button>
+                            </div>
+                        </form>
+                        <div id="groupList" class="manager-list"></div>
+                    </article>
+
+                    <article class="panel manager-panel">
+                        <div class="panel-head">
+                            <div>
+                                <h3>标签</h3>
+                                <p>标签可以多选，适合标记方法、数据类型、结论方向或待办状态。</p>
+                            </div>
+                        </div>
+                        <form id="tagForm" class="manager-form">
+                            <input id="tagEditId" type="hidden">
+                            <label class="field">
+                                <span>标签名称</span>
+                                <input id="tagNameInput" type="text" maxlength="30" placeholder="例如：RNA-seq / 待复现">
+                            </label>
+                            <label class="field">
+                                <span>颜色</span>
+                                <input id="tagColorInput" type="color" value="#a45c40">
+                            </label>
+                            <div class="inline-actions">
+                                <button class="btn btn-primary" type="submit">保存标签</button>
+                                <button id="tagCancelEditButton" class="btn btn-secondary hidden" type="button">取消编辑</button>
+                            </div>
+                        </form>
+                        <div id="tagList" class="manager-list"></div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="backup" class="content-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Backup & Restore</p>
+                        <h2>浏览器备份 / 恢复</h2>
+                    </div>
+                    <p class="section-copy">备份文件会包含文献元数据、标签、分组、笔记，以及 PDF 原文件的可恢复内容。</p>
+                </div>
+                <div class="backup-grid">
+                    <article class="panel backup-panel">
+                        <div class="panel-head">
+                            <div>
+                                <h3>导出与导入</h3>
+                                <p>推荐在更换浏览器、清缓存或跨设备迁移前先导出一份备份。</p>
+                            </div>
+                        </div>
+                        <div class="backup-actions">
+                            <button id="exportBackupButton" class="btn btn-primary" type="button">导出备份</button>
+                            <button id="importBackupButton" class="btn btn-secondary" type="button">导入备份</button>
+                            <button id="resetLibraryButton" class="btn btn-danger" type="button">清空当前文献库</button>
+                        </div>
+                        <div id="backupMeta" class="backup-meta"></div>
+                    </article>
+
+                    <article class="panel backup-panel">
+                        <div class="panel-head">
+                            <div>
+                                <h3>静态版范围</h3>
+                                <p>这部分功能在 Pages 版中被刻意裁剪，以换取“直接打开就能用”的部署方式。</p>
+                            </div>
+                        </div>
+                        <ul class="capability-list">
+                            <li>保留：上传 PDF、浏览、筛选、标签、分组、阅读、笔记、备份恢复</li>
+                            <li>移除：登录、SQLite、自动图片提取、AI 伴读、版本检查、数据库导入导出</li>
+                            <li>数据位置：浏览器本地 <code>IndexedDB</code></li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="readerModal" class="modal-shell hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-modal="true"></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="readerTitle">
+            <button id="closeReaderButton" class="modal-close" type="button" aria-label="关闭阅读器">×</button>
+            <div class="reader-layout">
+                <section class="reader-stage">
+                    <div class="reader-toolbar">
+                        <div>
+                            <p class="eyebrow">Reader</p>
+                            <h3 id="readerTitle">PDF 阅读器</h3>
+                        </div>
+                        <div class="reader-controls">
+                            <button id="readerPrevButton" class="btn btn-secondary" type="button">上一页</button>
+                            <span id="readerPageLabel" class="page-label">第 1 / 1 页</span>
+                            <button id="readerNextButton" class="btn btn-secondary" type="button">下一页</button>
+                        </div>
+                    </div>
+                    <div id="readerCanvasWrap" class="reader-canvas-wrap">
+                        <canvas id="readerCanvas"></canvas>
+                    </div>
+                </section>
+                <aside class="reader-sidebar">
+                    <div id="readerMeta" class="reader-meta"></div>
+                    <label class="field">
+                        <span>阅读笔记</span>
+                        <textarea id="readerNoteInput" rows="12" placeholder="阅读时的要点、疑问或后续实验想法"></textarea>
+                    </label>
+                    <button id="saveReaderNoteButton" class="btn btn-primary" type="button">保存笔记</button>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <div id="busyOverlay" class="busy-overlay hidden" aria-live="polite">
+        <div class="busy-card">
+            <div class="spinner"></div>
+            <p id="busyMessage">处理中…</p>
+        </div>
+    </div>
+
+    <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+    <input id="fileInput" type="file" accept="application/pdf,.pdf" multiple hidden>
+    <input id="importFileInput" type="file" accept="application/json" hidden>
+
+    <script src="./static/js/app.js"></script>
+</body>
+</html>
